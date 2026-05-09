@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Badge, STATUS_TONE } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { useProjects } from "@/hooks/useProjects";
@@ -99,15 +100,18 @@ export default function ProjectListPage() {
 
         {!isLoading &&
           projects.map((p) => (
-            <div
+            <Link
               key={p.id}
-              className="grid grid-cols-[6rem_1fr_5rem_5rem_10rem_2fr] text-sm border-b border-border hover:bg-hover/60 transition-colors group cursor-pointer"
+              href={`/projects/${p.id}`}
+              className="grid grid-cols-[6rem_1fr_5rem_5rem_10rem_2fr] text-sm border-b border-border hover:bg-hover/60 transition-colors group"
             >
               <div className="px-2 py-2.5">
                 <Badge tone={STATUS_TONE[p.status]}>{p.status}</Badge>
               </div>
               <div className="px-2 py-2.5">
-                <div className="font-medium text-fg">{p.name}</div>
+                <div className="font-medium text-fg group-hover:text-primary transition-colors">
+                  {p.name}
+                </div>
                 <div className="text-xs text-muted-fg mt-0.5 truncate font-mono">
                   {p.path.replace("/home/jos/", "~/")}
                 </div>
@@ -128,7 +132,7 @@ export default function ProjectListPage() {
               <div className="px-2 py-2.5 text-muted-fg text-xs truncate">
                 {p.last_commit_msg ?? "—"}
               </div>
-            </div>
+            </Link>
           ))}
       </div>
     </div>

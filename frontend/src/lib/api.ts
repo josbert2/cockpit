@@ -324,3 +324,67 @@ export async function fetchDashboardSummary(): Promise<DashboardSummary> {
   if (!res.ok) throw new Error(`fetchDashboardSummary failed: ${res.status}`);
   return res.json();
 }
+
+// ===== Project Deep Dive =====
+
+export interface VaultFile {
+  filename: string;
+  title: string;
+  frontmatter: Record<string, unknown>;
+  preview: string;
+  modified_at: string;
+}
+
+export interface VaultSectionRecord {
+  decisions?: VaultFile[];
+  features?: VaultFile[];
+  bugs?: VaultFile[];
+  glossary?: VaultFile[];
+  people?: VaultFile[];
+  research?: VaultFile[];
+}
+
+export interface VaultMdFile {
+  path: string;
+  frontmatter: Record<string, unknown>;
+  body: string;
+}
+
+export interface ProjectDeepDive {
+  project: Project;
+  tasks: Task[];
+  task_stats: {
+    total: number;
+    open: number;
+    done: number;
+    today: number;
+    manual: number;
+    vault: number;
+  };
+  git: {
+    available: boolean;
+    branch?: string | null;
+    commits?: Array<{
+      sha: string;
+      short_sha: string;
+      author: string;
+      date: string;
+      message: string;
+    }>;
+    contributors?: Array<{ commits: number; name: string }>;
+  };
+  activity: Array<{ date: string; count: number }>;
+  vault: {
+    available: boolean;
+    project_dir?: string;
+    readme?: VaultMdFile | null;
+    claude_md?: VaultMdFile | null;
+    sections?: VaultSectionRecord;
+  };
+}
+
+export async function fetchProjectDeepDive(id: number): Promise<ProjectDeepDive> {
+  const res = await fetch(`${API_BASE}/api/projects/${id}/deep-dive`);
+  if (!res.ok) throw new Error(`fetchProjectDeepDive failed: ${res.status}`);
+  return res.json();
+}
