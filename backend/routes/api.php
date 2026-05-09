@@ -29,6 +29,11 @@ Route::get('/dashboard/summary', [\App\Http\Controllers\Api\DashboardController:
 // Vault sync
 Route::post('/vault/sync-tasks', [\App\Http\Controllers\Api\VaultController::class, 'syncTasks']);
 
+// Weekly review
+Route::get('/weekly/summary', [\App\Http\Controllers\Api\WeeklyController::class, 'summary']);
+Route::post('/weekly/generate', [\App\Http\Controllers\Api\WeeklyController::class, 'generate']);
+Route::get('/weekly/list', [\App\Http\Controllers\Api\WeeklyController::class, 'listExisting']);
+
 // Properties (Notion-style)
 Route::get('/properties/definitions', [\App\Http\Controllers\Api\PropertyController::class, 'definitions']);
 Route::post('/properties/definitions', [\App\Http\Controllers\Api\PropertyController::class, 'storeDefinition']);

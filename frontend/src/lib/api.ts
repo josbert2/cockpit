@@ -388,3 +388,64 @@ export async function fetchProjectDeepDive(id: number): Promise<ProjectDeepDive>
   if (!res.ok) throw new Error(`fetchProjectDeepDive failed: ${res.status}`);
   return res.json();
 }
+
+// ===== Weekly review =====
+
+export interface WeeklySummary {
+  year: number;
+  week: number;
+  start: string;
+  end: string;
+  label: string;
+  tasks_done: number;
+  tasks_done_by_project: Array<{
+    project: { id: number; name: string; status: string } | null;
+    count: number;
+  }>;
+  tasks_carry_over: Array<{
+    id: number;
+    title: string;
+    priority: TaskPriority;
+    due_date: string | null;
+    project: { id: number; name: string; status: string } | null;
+  }>;
+  tasks_today_pending: number;
+  commits_total: number;
+  commits_by_repo: Array<{ name: string; count: number }>;
+  commits_by_day: Array<{ date: string; count: number }>;
+  inbox_pending: Array<{ slug: string; frontmatter: Record<string, unknown> }>;
+  top_tags: Array<{ tag: string; count: number }>;
+  hot_projects: Array<{ name: string; commits_30d: number; last_commit_at: string | null }>;
+}
+
+export async function fetchWeeklySummary(year?: number, week?: number): Promise<WeeklySummary> {
+  const params = new URLSearchParams();
+  if (year) params.set("year", String(year));
+  if (week) params.set("week", String(week));
+  const url = `${API_BASE}/api/weekly/summary${params.toString() ? `?${params}` : ""}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`fetchWeeklySummary failed: ${res.status}`);
+  return res.json();
+}
+
+export async function generateWeeklyReview(
+  year?: number,
+  week?: number
+): Promise<{ path: string; preview: string; year: number; week: number }> {
+  const res = await fetch(`${API_BASE}/api/weekly/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ year, week }),
+  });
+  if (!res.ok) throw new Error(`generateWeeklyReview failed: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchWeeklyList(): Promise<
+  Array<{ year: number; week: number; path: string; modified_at: string }>
+> {
+  const res = await fetch(`${API_BASE}/api/weekly/list`);
+  if (!res.ok) throw new Error(`fetchWeeklyList failed: ${res.status}`);
+  const json = await res.json();
+  return json.data;
+}
