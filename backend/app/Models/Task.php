@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Concerns\HasProperties;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
+    use HasProperties;
+
     public const STATUS_TODO = 'todo';
     public const STATUS_DOING = 'doing';
     public const STATUS_DONE = 'done';

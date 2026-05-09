@@ -191,3 +191,92 @@ export async function deleteInboxItem(slug: string): Promise<void> {
   const res = await fetch(`${API_BASE}/api/inbox/${slug}`, { method: "DELETE" });
   if (!res.ok) throw new Error(`deleteInboxItem failed: ${res.status}`);
 }
+
+// ===== Properties (Notion-style) =====
+
+export type PropertyType =
+  | "text"
+  | "number"
+  | "checkbox"
+  | "select"
+  | "multi_select"
+  | "date"
+  | "url"
+  | "status";
+
+export interface PropertyDefinition {
+  id: number;
+  entity_type: "task" | "project";
+  name: string;
+  type: PropertyType;
+  config: { options?: Array<{ label: string; color?: string }> } | null;
+  order: number;
+  archived: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PropertyEntry {
+  definition: PropertyDefinition;
+  value: unknown;
+}
+
+export async function fetchPropertyDefinitions(
+  entity: "task" | "project" = "task"
+): Promise<PropertyDefinition[]> {
+  const res = await fetch(`${API_BASE}/api/properties/definitions?entity=${entity}`);
+  if (!res.ok) throw new Error(`fetchPropertyDefinitions failed: ${res.status}`);
+  const json = await res.json();
+  return json.data;
+}
+
+export interface CreateDefinitionInput {
+  entity_type: "task" | "project";
+  name: string;
+  type: PropertyType;
+  config?: { options?: Array<{ label: string; color?: string }> } | null;
+  order?: number;
+}
+
+export async function createPropertyDefinition(
+  input: CreateDefinitionInput
+): Promise<PropertyDefinition> {
+  const res = await fetch(`${API_BASE}/api/properties/definitions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) throw new Error(`createPropertyDefinition failed: ${res.status}`);
+  return res.json();
+}
+
+export async function deletePropertyDefinition(id: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/properties/definitions/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error(`deletePropertyDefinition failed: ${res.status}`);
+}
+
+export async function fetchEntityProperties(
+  entityType: "task" | "project",
+  entityId: number
+): Promise<PropertyEntry[]> {
+  const res = await fetch(`${API_BASE}/api/properties/${entityType}/${entityId}`);
+  if (!res.ok) throw new Error(`fetchEntityProperties failed: ${res.status}`);
+  const json = await res.json();
+  return json.data;
+}
+
+export async function setEntityPropertyValue(
+  entityType: "task" | "project",
+  entityId: number,
+  definitionId: number,
+  value: unknown
+): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/properties/${entityType}/${entityId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ definition_id: definitionId, value }),
+  });
+  if (!res.ok) throw new Error(`setEntityPropertyValue failed: ${res.status}`);
+}

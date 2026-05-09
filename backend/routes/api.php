@@ -21,3 +21,11 @@ Route::get('/inbox/{slug}', [InboxController::class, 'show']);
 Route::post('/inbox/{slug}/move', [InboxController::class, 'move']);
 Route::post('/inbox/{slug}/archive', [InboxController::class, 'archive']);
 Route::delete('/inbox/{slug}', [InboxController::class, 'destroy']);
+
+// Properties (Notion-style)
+Route::get('/properties/definitions', [\App\Http\Controllers\Api\PropertyController::class, 'definitions']);
+Route::post('/properties/definitions', [\App\Http\Controllers\Api\PropertyController::class, 'storeDefinition']);
+Route::patch('/properties/definitions/{definition}', [\App\Http\Controllers\Api\PropertyController::class, 'updateDefinition']);
+Route::delete('/properties/definitions/{definition}', [\App\Http\Controllers\Api\PropertyController::class, 'destroyDefinition']);
+Route::get('/properties/{entityType}/{entityId}', [\App\Http\Controllers\Api\PropertyController::class, 'getValues']);
+Route::post('/properties/{entityType}/{entityId}', [\App\Http\Controllers\Api\PropertyController::class, 'setValue']);

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Concerns\HasProperties;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use HasProperties;
+
     public const STATUS_HOT = 'HOT';
     public const STATUS_ACTIVE = 'ACTIVE';
     public const STATUS_PAUSED = 'PAUSED';
