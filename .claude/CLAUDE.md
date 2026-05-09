@@ -1,0 +1,1 @@
+/home/jos/vault/01-Projects/cockpit/CLAUDE.md
