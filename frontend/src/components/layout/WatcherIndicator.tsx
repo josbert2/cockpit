@@ -18,7 +18,7 @@ export function WatcherIndicator() {
   }
 
   const active = data.watcher_active;
-  const age = data.watcher_stamp_age_s;
+  const age = data.watcher_heartbeat_age_s;
   const ageLabel =
     age === null
       ? "no init"

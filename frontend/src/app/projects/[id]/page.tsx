@@ -17,6 +17,7 @@ import { useProjectDeepDive } from "@/hooks/useProjectDeepDive";
 import { Badge, STATUS_TONE } from "@/components/ui/Badge";
 import { ActivityHeatmap } from "@/components/project/ActivityHeatmap";
 import { MarkdownView } from "@/components/project/MarkdownView";
+import { PropertiesPanel } from "@/components/properties/PropertiesPanel";
 import { PRIORITY_TONE } from "@/hooks/useTasks";
 import { cn } from "@/lib/utils";
 import type { VaultSectionRecord } from "@/lib/api";
@@ -124,7 +125,13 @@ export default function ProjectDetailPage({
 
       {/* Tab content */}
       {tab === "overview" && (
-        <OverviewTab activity={activity} project={project} vault={vault} git={git} />
+        <OverviewTab
+          activity={activity}
+          project={project}
+          vault={vault}
+          git={git}
+          projectId={projectId}
+        />
       )}
       {tab === "vault" && <VaultTab vault={vault} />}
       {tab === "git" && <GitTab git={git} />}
@@ -162,15 +169,25 @@ function OverviewTab({
   project,
   vault,
   git,
+  projectId,
 }: {
   activity: Array<{ date: string; count: number }>;
   project: { stack: string | null; last_commit_msg: string | null };
   vault: { available: boolean; readme?: { body: string } | null };
   git: { commits?: Array<{ short_sha: string; author: string; date: string; message: string }> };
+  projectId: number;
 }) {
   const totalCommits = activity.reduce((s, d) => s + d.count, 0);
   return (
     <div className="space-y-6">
+      {/* Properties Notion-style */}
+      <div className="rounded-md border border-border bg-card p-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-fg mb-3">
+          Properties
+        </h2>
+        <PropertiesPanel entityType="project" entityId={projectId} />
+      </div>
+
       <div className="rounded-md border border-border bg-card p-5 space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-fg">

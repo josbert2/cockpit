@@ -15,7 +15,8 @@ class CockpitWatchVault extends Command
     protected $description = 'Watcher del vault. Polea filesystem cada N segundos y dispara sync cuando ve cambios en .md.';
 
     private string $vaultRoot;
-    private string $stampFile;
+    private string $stampFile;       // se actualiza solo cuando hay cambios (usado por find -newer)
+    private string $heartbeatFile;   // se actualiza CADA poll (proof of life para syncStatus)
 
     public function handle(VaultTaskScanner $scanner): int
     {
@@ -23,10 +24,10 @@ class CockpitWatchVault extends Command
         $stampDir = (getenv('HOME') ?: '/home/jos') . '/.cockpit';
         if (! is_dir($stampDir)) mkdir($stampDir, 0755, true);
         $this->stampFile = $stampDir . '/last-vault-watch';
+        $this->heartbeatFile = $stampDir . '/vault-watcher-heartbeat';
 
-        if (! file_exists($this->stampFile)) {
-            touch($this->stampFile);
-        }
+        if (! file_exists($this->stampFile)) touch($this->stampFile);
+        touch($this->heartbeatFile);
 
         $interval = max(2, (int) $this->option('interval'));
 
@@ -62,6 +63,9 @@ class CockpitWatchVault extends Command
 
                 touch($this->stampFile);
             }
+
+            // Heartbeat siempre — proof of life para que syncStatus muestre "watcher activo"
+            touch($this->heartbeatFile);
 
             sleep($interval);
         }

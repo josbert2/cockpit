@@ -22,17 +22,25 @@ class VaultController extends Controller
 
     public function syncStatus()
     {
+        $home = getenv('HOME') ?: '/home/jos';
+        $heartbeatFile = $home . '/.cockpit/vault-watcher-heartbeat';
+        $stampFile = $home . '/.cockpit/last-vault-watch';
+
         $lastSync = Task::where('source', 'vault')->max('vault_synced_at');
-        $watcherStamp = (getenv('HOME') ?: '/home/jos') . '/.cockpit/last-vault-watch';
-        $watcherActive = file_exists($watcherStamp)
-            && (time() - filemtime($watcherStamp)) < 300; // < 5min ⇒ activo
+        $heartbeatAge = file_exists($heartbeatFile)
+            ? time() - filemtime($heartbeatFile)
+            : null;
+        // Watcher activo si su heartbeat es <30s (poll interval máx 5s ⇒ 30s holgado)
+        $watcherActive = $heartbeatAge !== null && $heartbeatAge < 30;
+        $lastChangeAge = file_exists($stampFile)
+            ? time() - filemtime($stampFile)
+            : null;
 
         return response()->json([
             'last_sync_at' => $lastSync,
             'watcher_active' => $watcherActive,
-            'watcher_stamp_age_s' => file_exists($watcherStamp)
-                ? time() - filemtime($watcherStamp)
-                : null,
+            'watcher_heartbeat_age_s' => $heartbeatAge,
+            'last_change_age_s' => $lastChangeAge,
             'vault_open_count' => Task::open()->where('source', 'vault')->count(),
         ]);
     }
