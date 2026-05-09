@@ -108,7 +108,8 @@ export async function syncVaultTasks(): Promise<{
 export interface VaultSyncStatus {
   last_sync_at: string | null;
   watcher_active: boolean;
-  watcher_stamp_age_s: number | null;
+  watcher_heartbeat_age_s: number | null;
+  last_change_age_s: number | null;
   vault_open_count: number;
 }
 
