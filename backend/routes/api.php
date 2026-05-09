@@ -22,6 +22,9 @@ Route::post('/inbox/{slug}/move', [InboxController::class, 'move']);
 Route::post('/inbox/{slug}/archive', [InboxController::class, 'archive']);
 Route::delete('/inbox/{slug}', [InboxController::class, 'destroy']);
 
+// Dashboard
+Route::get('/dashboard/summary', [\App\Http\Controllers\Api\DashboardController::class, 'summary']);
+
 // Vault sync
 Route::post('/vault/sync-tasks', [\App\Http\Controllers\Api\VaultController::class, 'syncTasks']);
 

@@ -299,3 +299,28 @@ export async function setEntityPropertyValue(
   });
   if (!res.ok) throw new Error(`setEntityPropertyValue failed: ${res.status}`);
 }
+
+// ===== Dashboard =====
+
+export interface DashboardSummary {
+  project_status_counts: Record<ProjectStatus, number>;
+  tasks_open: number;
+  tasks_manual_open: number;
+  tasks_vault_open: number;
+  tasks_today_count: number;
+  tasks_done_this_week: number;
+  inbox_pending_count: number;
+  today_tasks: Task[];
+  hot_projects: Project[];
+  inbox_preview: InboxItem[];
+  tasks_by_project: Array<{
+    project: { id: number; name: string; status: string };
+    count: number;
+  }>;
+}
+
+export async function fetchDashboardSummary(): Promise<DashboardSummary> {
+  const res = await fetch(`${API_BASE}/api/dashboard/summary`);
+  if (!res.ok) throw new Error(`fetchDashboardSummary failed: ${res.status}`);
+  return res.json();
+}

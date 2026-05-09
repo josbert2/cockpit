@@ -15,10 +15,11 @@ import {
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Proyectos", icon: LayoutGrid, emoji: "📦" },
+  { href: "/", label: "Dashboard", icon: LayoutGrid, emoji: "🛩" },
   { href: "/today", label: "Hoy", icon: Sun, emoji: "☀️" },
-  { href: "/inbox", label: "Inbox", icon: Inbox, emoji: "📥" },
+  { href: "/projects", label: "Proyectos", icon: LayoutGrid, emoji: "📦" },
   { href: "/tasks", label: "Tareas", icon: ListChecks, emoji: "✓" },
+  { href: "/inbox", label: "Inbox", icon: Inbox, emoji: "📥" },
   { href: "/weekly", label: "Weekly", icon: CalendarDays, emoji: "📅" },
 ];
 

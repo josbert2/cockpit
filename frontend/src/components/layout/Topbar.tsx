@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const PATH_LABELS: Record<string, { label: string; emoji: string }> = {
-  "/": { label: "Proyectos", emoji: "📦" },
+  "/": { label: "Dashboard", emoji: "🛩" },
   "/today": { label: "Hoy", emoji: "☀️" },
+  "/projects": { label: "Proyectos", emoji: "📦" },
   "/inbox": { label: "Inbox", emoji: "📥" },
   "/tasks": { label: "Tareas", emoji: "✓" },
   "/weekly": { label: "Weekly", emoji: "📅" },
