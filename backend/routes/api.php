@@ -28,6 +28,7 @@ Route::get('/dashboard/summary', [\App\Http\Controllers\Api\DashboardController:
 
 // Vault sync
 Route::post('/vault/sync-tasks', [\App\Http\Controllers\Api\VaultController::class, 'syncTasks']);
+Route::get('/vault/sync-status', [\App\Http\Controllers\Api\VaultController::class, 'syncStatus']);
 
 // Weekly review
 Route::get('/weekly/summary', [\App\Http\Controllers\Api\WeeklyController::class, 'summary']);

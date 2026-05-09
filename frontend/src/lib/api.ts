@@ -105,6 +105,19 @@ export async function syncVaultTasks(): Promise<{
   return res.json();
 }
 
+export interface VaultSyncStatus {
+  last_sync_at: string | null;
+  watcher_active: boolean;
+  watcher_stamp_age_s: number | null;
+  vault_open_count: number;
+}
+
+export async function fetchVaultSyncStatus(): Promise<VaultSyncStatus> {
+  const res = await fetch(`${API_BASE}/api/vault/sync-status`);
+  if (!res.ok) throw new Error(`fetchVaultSyncStatus failed: ${res.status}`);
+  return res.json();
+}
+
 export interface CreateTaskInput {
   title: string;
   project_id?: number | null;

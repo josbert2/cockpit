@@ -1,9 +1,10 @@
 "use client";
 
-import { Moon, SunMedium, ChevronRight, Star, Share, MoreHorizontal } from "lucide-react";
+import { Moon, SunMedium, ChevronRight, Star, MoreHorizontal } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { WatcherIndicator } from "./WatcherIndicator";
 
 const PATH_LABELS: Record<string, { label: string; emoji: string }> = {
   "/": { label: "Dashboard", emoji: "🛩" },
@@ -33,7 +34,8 @@ export function Topbar() {
       </div>
 
       {/* Right actions */}
-      <div className="ml-auto flex items-center gap-0.5">
+      <div className="ml-auto flex items-center gap-2">
+        <WatcherIndicator />
         <button
           type="button"
           className="h-7 px-2 grid place-items-center rounded text-xs text-muted-fg hover:bg-hover transition-colors"
