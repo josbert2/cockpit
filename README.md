@@ -6,9 +6,10 @@ Plataforma personal de gestión de proyectos para devs solos con muchos repos ab
 
 ## Stack
 
-- **Backend**: Laravel 13 + PHP 8.4 + SQLite
+- **Backend**: Laravel 13 + PHP 8.4 + MySQL 8.4 (Docker)
 - **Frontend**: Next.js 16 + React 19 + Tailwind 4 + TanStack Query + Zustand
-- **Sin Docker, sin auth, single-user** — recortes deliberados (ver [decisions/2026-05-08-stack.md](../../vault/01-Projects/cockpit/decisions/2026-05-08-stack.md))
+- **DB en Docker** (puerto host 3320), Adminer en `:8083`. Laravel y Next.js corren en host (no Dockerizados).
+- **Sin auth, single-user** — recortes deliberados (ver [decisions/2026-05-08-stack.md](../../vault/01-Projects/cockpit/decisions/2026-05-08-stack.md))
 
 ## Layout
 
@@ -25,19 +26,21 @@ cockpit/
 ## Setup
 
 ```bash
-# Backend
-cd backend
-cp .env.example .env
-# Editar .env: DB_CONNECTION=sqlite, comentar DB_HOST/DB_PORT/etc
-touch database/database.sqlite
-php artisan key:generate
-php artisan migrate
-php artisan serve   # http://localhost:8000
+# 1. Levantar DB (MySQL 8 + Adminer)
+docker compose up -d
+# DB en localhost:3320, Adminer en http://localhost:8083 (login: cockpit/cockpit, server: db)
 
-# Frontend (en otra terminal)
+# 2. Backend
+cd backend
+# .env ya configurado para MySQL en 3320
+php artisan key:generate     # solo primera vez
+php artisan migrate
+php artisan serve            # http://localhost:8000
+
+# 3. Frontend (en otra terminal)
 cd frontend
 pnpm install
-pnpm dev            # http://localhost:3000
+pnpm dev --port 3020         # 3000 chocaría con clipal — uso 3020
 ```
 
 ## Comandos clave
