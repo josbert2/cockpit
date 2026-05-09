@@ -22,6 +22,9 @@ Route::post('/inbox/{slug}/move', [InboxController::class, 'move']);
 Route::post('/inbox/{slug}/archive', [InboxController::class, 'archive']);
 Route::delete('/inbox/{slug}', [InboxController::class, 'destroy']);
 
+// Vault sync
+Route::post('/vault/sync-tasks', [\App\Http\Controllers\Api\VaultController::class, 'syncTasks']);
+
 // Properties (Notion-style)
 Route::get('/properties/definitions', [\App\Http\Controllers\Api\PropertyController::class, 'definitions']);
 Route::post('/properties/definitions', [\App\Http\Controllers\Api\PropertyController::class, 'storeDefinition']);

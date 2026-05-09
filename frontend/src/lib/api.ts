@@ -62,6 +62,11 @@ export interface Task {
   today_slot: number | null;
   project_id: number | null;
   project: { id: number; name: string; status: string } | null;
+  source: "manual" | "vault";
+  vault_path: string | null;
+  vault_line: number | null;
+  vault_hash: string | null;
+  vault_synced_at: string | null;
   started_at: string | null;
   completed_at: string | null;
   created_at: string;
@@ -72,6 +77,7 @@ export interface TaskFilters {
   status?: string;
   today?: boolean;
   project_id?: number;
+  source?: "manual" | "vault" | "all";
 }
 
 export async function fetchTasks(filters: TaskFilters = {}): Promise<Task[]> {
@@ -79,11 +85,24 @@ export async function fetchTasks(filters: TaskFilters = {}): Promise<Task[]> {
   if (filters.status) params.set("status", filters.status);
   if (filters.today) params.set("today", "1");
   if (filters.project_id) params.set("project_id", String(filters.project_id));
+  if (filters.source && filters.source !== "all") params.set("source", filters.source);
   const url = `${API_BASE}/api/tasks${params.toString() ? `?${params}` : ""}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`fetchTasks failed: ${res.status}`);
   const json = await res.json();
   return json.data;
+}
+
+export async function syncVaultTasks(): Promise<{
+  upserted: number;
+  created: number;
+  updated: number;
+  deleted: number;
+  elapsed_s: number;
+}> {
+  const res = await fetch(`${API_BASE}/api/vault/sync-tasks`, { method: "POST" });
+  if (!res.ok) throw new Error(`syncVaultTasks failed: ${res.status}`);
+  return res.json();
 }
 
 export interface CreateTaskInput {

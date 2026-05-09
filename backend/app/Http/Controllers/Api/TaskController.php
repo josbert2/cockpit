@@ -27,6 +27,10 @@ class TaskController extends Controller
             $query->where('project_id', $projectId);
         }
 
+        if ($source = $request->string('source')->value()) {
+            $query->where('source', $source);
+        }
+
         $query->byPriority()->latest('id');
 
         return response()->json(['data' => $query->get()]);
