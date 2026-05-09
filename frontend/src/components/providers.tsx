@@ -4,10 +4,21 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { useState } from "react";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
+import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts";
+import { CommandPalette } from "@/components/cmdk/CommandPalette";
+import { Cheatsheet } from "@/components/cmdk/Cheatsheet";
 
-function RealtimeBridge({ children }: { children: React.ReactNode }) {
+function GlobalLayer({ children }: { children: React.ReactNode }) {
   useRealtimeSync();
-  return <>{children}</>;
+  const { paletteOpen, setPaletteOpen, cheatsheetOpen, setCheatsheetOpen } =
+    useGlobalShortcuts();
+  return (
+    <>
+      {children}
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <Cheatsheet open={cheatsheetOpen} onClose={() => setCheatsheetOpen(false)} />
+    </>
+  );
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -26,7 +37,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <QueryClientProvider client={client}>
-        <RealtimeBridge>{children}</RealtimeBridge>
+        <GlobalLayer>{children}</GlobalLayer>
       </QueryClientProvider>
     </ThemeProvider>
   );
