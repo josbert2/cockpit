@@ -1,65 +1,59 @@
-import Image from "next/image";
+import { Card } from "@/components/ui/Card";
+import { Badge, STATUS_TONE } from "@/components/ui/Badge";
 
-export default function Home() {
+const FAKE_PROJECTS = [
+  { name: "relay", status: "HOT" as const, days: 1, commits30d: 87, stack: "node vite", msg: "fix: HandoffCountdown se quedaba congelado" },
+  { name: "erp", status: "HOT" as const, days: 1, commits30d: 40, stack: "php node laravel", msg: "Merge release-reverb" },
+  { name: "wa-baileys", status: "HOT" as const, days: 1, commits30d: 3, stack: "node", msg: "contacts: cache + GET" },
+  { name: "erp-mobile", status: "HOT" as const, days: 1, commits30d: 4, stack: "node", msg: "Fix: instagram" },
+  { name: "realtes", status: "ACTIVE" as const, days: 8, commits30d: 39, stack: "?", msg: "remove .env.bak from tracking" },
+  { name: "lizz", status: "ACTIVE" as const, days: 10, commits30d: 5, stack: "?", msg: "fix(ingresos): payments.meta.total" },
+  { name: "futbol-stats", status: "ACTIVE" as const, days: 11, commits30d: 13, stack: "py", msg: "feat: betslip widget + top-picks" },
+];
+
+export default function ProjectListPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="p-6 max-w-6xl mx-auto space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Proyectos</h1>
+        <p className="text-sm text-muted-fg mt-1">
+          37 repos en <code className="text-xs bg-muted px-1.5 py-0.5 rounded">~/root/</code>. Datos mock — Fase 1 va a leer de la DB.
+        </p>
+      </div>
+
+      <Card className="p-0 overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/50 text-muted-fg text-xs uppercase tracking-wider">
+            <tr>
+              <th className="text-left p-3 font-medium">Status</th>
+              <th className="text-left p-3 font-medium">Repo</th>
+              <th className="text-right p-3 font-medium">Días</th>
+              <th className="text-right p-3 font-medium">30d</th>
+              <th className="text-left p-3 font-medium">Stack</th>
+              <th className="text-left p-3 font-medium">Último commit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FAKE_PROJECTS.map((p) => (
+              <tr
+                key={p.name}
+                className="border-t border-border hover:bg-muted/40 transition-colors"
+              >
+                <td className="p-3">
+                  <Badge tone={STATUS_TONE[p.status]}>{p.status}</Badge>
+                </td>
+                <td className="p-3 font-medium">{p.name}</td>
+                <td className="p-3 text-right tabular-nums text-muted-fg">{p.days}</td>
+                <td className="p-3 text-right tabular-nums text-muted-fg">{p.commits30d}</td>
+                <td className="p-3">
+                  <code className="text-xs bg-muted px-1.5 py-0.5 rounded">{p.stack}</code>
+                </td>
+                <td className="p-3 text-muted-fg truncate max-w-md">{p.msg}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
     </div>
   );
 }
