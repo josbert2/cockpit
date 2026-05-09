@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\TasksMutated;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
+use App\Services\VaultTaskWriter;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -65,7 +66,7 @@ class TaskController extends Controller
         return response()->json($task->load('project:id,name,status'), 201);
     }
 
-    public function update(Request $request, Task $task)
+    public function update(Request $request, Task $task, VaultTaskWriter $writer)
     {
         $data = $request->validate([
             'title' => 'sometimes|string|max:255',
@@ -79,6 +80,8 @@ class TaskController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $statusChanged = isset($data['status']) && $data['status'] !== $task->status;
+
         if (isset($data['status'])) {
             if ($data['status'] === 'doing' && ! $task->started_at) {
                 $task->started_at = now();
@@ -88,9 +91,18 @@ class TaskController extends Controller
                 $task->today = false;
                 $task->today_slot = null;
             }
+            if (in_array($data['status'], ['todo', 'doing'], true) && $task->completed_at) {
+                $task->completed_at = null;
+            }
         }
 
         $task->fill($data)->save();
+
+        // Bridge bidireccional: si es vault task y cambió status, escribimos el .md
+        if ($statusChanged && $task->source === 'vault') {
+            $done = in_array($task->status, [Task::STATUS_DONE, Task::STATUS_CANCELED], true);
+            $writer->syncCheckbox($task, $done);
+        }
 
         broadcast(new TasksMutated('updated', $task->id))->toOthers();
 
@@ -134,13 +146,19 @@ class TaskController extends Controller
         return response()->json($task->load('project:id,name,status'));
     }
 
-    public function complete(Task $task)
+    public function complete(Task $task, VaultTaskWriter $writer)
     {
         $task->status = Task::STATUS_DONE;
         $task->completed_at = now();
         $task->today = false;
         $task->today_slot = null;
         $task->save();
+
+        // Bridge bidireccional
+        if ($task->source === 'vault') {
+            $writer->syncCheckbox($task, true);
+        }
+
         broadcast(new TasksMutated('completed', $task->id))->toOthers();
         return response()->json($task->load('project:id,name,status'));
     }
