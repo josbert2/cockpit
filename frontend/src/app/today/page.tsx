@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Check, X, Plus, Sparkles } from "lucide-react";
 import {
   useTasks,
@@ -29,17 +30,14 @@ export default function TodayPage() {
   const backlogNotInToday = backlog.filter((t) => !t.today);
 
   return (
-    <div className="p-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_24rem] gap-6">
+    <div className="px-12 py-8 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-8">
       {/* Today slots */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Hoy</h1>
-            <p className="text-sm text-muted-fg mt-1">
-              Las 3 cosas que mueven la aguja. Drag desde el backlog o usa los botones.
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          emoji="☀️"
+          title="Hoy"
+          description="Las 3 cosas que mueven la aguja."
+        />
 
         {[1, 2, 3].map((slot) => {
           const task = taskInSlot(today, slot);

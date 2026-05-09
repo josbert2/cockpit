@@ -9,31 +9,61 @@ import {
   ListChecks,
   CalendarDays,
   Settings,
+  Search,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Proyectos", icon: LayoutGrid },
-  { href: "/today", label: "Hoy", icon: Sun },
-  { href: "/inbox", label: "Inbox", icon: Inbox },
-  { href: "/tasks", label: "Tareas", icon: ListChecks },
-  { href: "/weekly", label: "Weekly", icon: CalendarDays },
+  { href: "/", label: "Proyectos", icon: LayoutGrid, emoji: "📦" },
+  { href: "/today", label: "Hoy", icon: Sun, emoji: "☀️" },
+  { href: "/inbox", label: "Inbox", icon: Inbox, emoji: "📥" },
+  { href: "/tasks", label: "Tareas", icon: ListChecks, emoji: "✓" },
+  { href: "/weekly", label: "Weekly", icon: CalendarDays, emoji: "📅" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-56 shrink-0 border-r border-border bg-bg flex flex-col">
-      <div className="px-4 h-14 flex items-center gap-2 border-b border-border">
-        <div className="size-7 rounded-xl bg-primary flex items-center justify-center font-bold text-primary-fg">
+    <aside className="w-60 shrink-0 bg-sidebar text-sidebar-fg flex flex-col">
+      {/* Workspace header */}
+      <div className="px-3 h-11 flex items-center gap-2 group cursor-pointer hover:bg-hover/60 mx-1 mt-2 rounded">
+        <div className="size-5 rounded text-base leading-none grid place-items-center">
           ✈
         </div>
-        <span className="font-semibold tracking-tight">cockpit</span>
+        <span className="text-sm font-medium text-fg tracking-tight flex-1">
+          cockpit
+        </span>
       </div>
 
-      <nav className="flex-1 p-2 space-y-0.5">
-        {NAV.map(({ href, label, icon: Icon }) => {
+      {/* Quick actions */}
+      <div className="px-2 mt-1 space-y-0.5">
+        <button
+          type="button"
+          className="w-full flex items-center gap-2 px-2 h-7 rounded text-sm text-muted-fg hover:bg-hover transition-colors"
+        >
+          <Search className="size-4" strokeWidth={1.75} />
+          <span className="text-xs">Buscar</span>
+          <kbd className="ml-auto text-[10px] font-mono opacity-60">⌘K</kbd>
+        </button>
+        <button
+          type="button"
+          className="w-full flex items-center gap-2 px-2 h-7 rounded text-sm text-muted-fg hover:bg-hover transition-colors"
+        >
+          <Plus className="size-4" strokeWidth={1.75} />
+          <span className="text-xs">Nueva tarea</span>
+        </button>
+      </div>
+
+      <div className="h-px bg-border mx-3 my-3" />
+
+      {/* Navigation */}
+      <nav className="flex-1 px-2 space-y-px overflow-y-auto">
+        <p className="px-2 mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-fg/70">
+          Workspace
+        </p>
+        {NAV.map(({ href, label, emoji }) => {
           const active =
             href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
@@ -41,14 +71,14 @@ export function Sidebar() {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-colors",
+                "flex items-center gap-2 px-2 h-7 rounded text-sm transition-colors",
                 active
-                  ? "bg-muted text-fg font-medium"
-                  : "text-muted-fg hover:bg-muted hover:text-fg"
+                  ? "bg-hover text-fg font-medium"
+                  : "hover:bg-hover/60 text-sidebar-fg"
               )}
             >
-              <Icon className="size-4" strokeWidth={1.75} />
-              {label}
+              <span className="text-sm leading-none w-4 text-center">{emoji}</span>
+              <span className="flex-1 truncate">{label}</span>
             </Link>
           );
         })}
@@ -57,7 +87,7 @@ export function Sidebar() {
       <div className="p-2 border-t border-border">
         <Link
           href="/settings"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-muted-fg hover:bg-muted hover:text-fg transition-colors"
+          className="flex items-center gap-2 px-2 h-7 rounded text-sm text-sidebar-fg hover:bg-hover transition-colors"
         >
           <Settings className="size-4" strokeWidth={1.75} />
           Settings

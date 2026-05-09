@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\TasksMutated;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -55,6 +56,8 @@ class TaskController extends Controller
             'notes' => $data['notes'] ?? null,
         ]);
 
+        broadcast(new TasksMutated('created', $task->id))->toOthers();
+
         return response()->json($task->load('project:id,name,status'), 201);
     }
 
@@ -85,12 +88,16 @@ class TaskController extends Controller
 
         $task->fill($data)->save();
 
+        broadcast(new TasksMutated('updated', $task->id))->toOthers();
+
         return response()->json($task->load('project:id,name,status'));
     }
 
     public function destroy(Task $task)
     {
+        $taskId = $task->id;
         $task->delete();
+        broadcast(new TasksMutated('deleted', $taskId))->toOthers();
         return response()->noContent();
     }
 
@@ -99,7 +106,6 @@ class TaskController extends Controller
         $slot = $request->integer('slot');
         $slot = $slot >= 1 && $slot <= 3 ? $slot : $this->nextFreeSlot();
 
-        // Si hay otra task en este slot, swapearla a backlog
         if ($slot) {
             Task::where('today_slot', $slot)
                 ->where('id', '!=', $task->id)
@@ -110,6 +116,8 @@ class TaskController extends Controller
         $task->today_slot = $slot;
         $task->save();
 
+        broadcast(new TasksMutated('today.promoted', $task->id))->toOthers();
+
         return response()->json($task->load('project:id,name,status'));
     }
 
@@ -118,6 +126,7 @@ class TaskController extends Controller
         $task->today = false;
         $task->today_slot = null;
         $task->save();
+        broadcast(new TasksMutated('today.removed', $task->id))->toOthers();
         return response()->json($task->load('project:id,name,status'));
     }
 
@@ -128,6 +137,7 @@ class TaskController extends Controller
         $task->today = false;
         $task->today_slot = null;
         $task->save();
+        broadcast(new TasksMutated('completed', $task->id))->toOthers();
         return response()->json($task->load('project:id,name,status'));
     }
 

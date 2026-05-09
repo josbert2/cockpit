@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Plus, Trash2, Check } from "lucide-react";
 import {
   useTasks,
@@ -27,13 +28,12 @@ export default function TasksPage() {
   const [priority, setPriority] = useState<"urgent" | "high" | "med" | "low">("med");
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Tareas</h1>
-        <p className="text-sm text-muted-fg mt-1">
-          {isLoading ? "Cargando..." : `${tasks.length} tareas abiertas.`}
-        </p>
-      </div>
+    <div className="px-12 py-8 max-w-5xl mx-auto space-y-6">
+      <PageHeader
+        emoji="✓"
+        title="Tareas"
+        description={isLoading ? "Cargando..." : `${tasks.length} tareas abiertas.`}
+      />
 
       {/* Create form */}
       <Card>

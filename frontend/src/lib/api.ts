@@ -146,3 +146,48 @@ export async function completeTask(id: number): Promise<Task> {
   if (!res.ok) throw new Error(`completeTask failed: ${res.status}`);
   return res.json();
 }
+
+// ===== Inbox =====
+
+export interface InboxItem {
+  slug: string;
+  path: string;
+  frontmatter: Record<string, unknown>;
+  body: string;
+  word_count: number;
+  modified_at: string;
+}
+
+export async function fetchInbox(): Promise<InboxItem[]> {
+  const res = await fetch(`${API_BASE}/api/inbox`);
+  if (!res.ok) throw new Error(`fetchInbox failed: ${res.status}`);
+  const json = await res.json();
+  return json.data;
+}
+
+export type InboxMoveType = "note" | "decision" | "feature" | "bug" | "idea";
+
+export async function moveInboxItem(
+  slug: string,
+  project: string,
+  type: InboxMoveType = "note"
+): Promise<{ from: string; to: string }> {
+  const res = await fetch(`${API_BASE}/api/inbox/${slug}/move`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ project, type }),
+  });
+  if (!res.ok) throw new Error(`moveInboxItem failed: ${res.status}`);
+  return res.json();
+}
+
+export async function archiveInboxItem(slug: string): Promise<{ from: string; to: string }> {
+  const res = await fetch(`${API_BASE}/api/inbox/${slug}/archive`, { method: "POST" });
+  if (!res.ok) throw new Error(`archiveInboxItem failed: ${res.status}`);
+  return res.json();
+}
+
+export async function deleteInboxItem(slug: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/inbox/${slug}`, { method: "DELETE" });
+  if (!res.ok) throw new Error(`deleteInboxItem failed: ${res.status}`);
+}

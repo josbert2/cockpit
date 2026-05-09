@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, -apple-system, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   --color-bg: var(--bg);
   --color-fg: var(--fg);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-fg: var(--sidebar-fg);
   --color-muted: var(--muted);
   --color-muted-fg: var(--muted-fg);
   --color-card: var(--card);
   --color-card-fg: var(--card-fg);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-hover: var(--hover);
   --color-primary: var(--primary);
   --color-primary-fg: var(--primary-fg);
   --color-accent: var(--accent);
@@ -21,53 +24,78 @@
   --color-danger: var(--danger);
   --color-purple: var(--purple);
 
-  --radius-card: 1.5rem; /* rounded-3xl shorthand */
+  --radius-card: 0.5rem;
 }
 
+/* Notion light palette */
 :root {
-  --bg: oklch(0.99 0.005 270);
-  --fg: oklch(0.18 0.02 270);
-  --muted: oklch(0.96 0.005 270);
-  --muted-fg: oklch(0.45 0.02 270);
-  --card: oklch(1 0 0);
-  --card-fg: oklch(0.18 0.02 270);
-  --border: oklch(0.9 0.005 270);
-  --input: oklch(0.94 0.005 270);
-  --primary: oklch(0.55 0.18 260);
-  --primary-fg: oklch(0.99 0.005 260);
-  --accent: oklch(0.7 0.15 200);
-  --accent-fg: oklch(0.18 0.02 270);
-  --success: oklch(0.65 0.17 150);
-  --warning: oklch(0.75 0.15 75);
-  --danger: oklch(0.62 0.22 25);
-  --purple: oklch(0.6 0.2 295);
+  --bg: #ffffff;
+  --fg: #37352f;
+  --sidebar: #fbfbfa;
+  --sidebar-fg: #4a4843;
+  --muted: #f7f6f3;
+  --muted-fg: #908d87;
+  --card: #ffffff;
+  --card-fg: #37352f;
+  --border: #ebeae7;
+  --input: #f7f6f3;
+  --hover: #efefee;
+  --primary: #2383e2;
+  --primary-fg: #ffffff;
+  --accent: #2383e2;
+  --accent-fg: #ffffff;
+  --success: #4dab9a;
+  --warning: #d9730d;
+  --danger: #e03e3e;
+  --purple: #9065b0;
 }
 
+/* Notion dark palette */
 .dark {
-  --bg: oklch(0.16 0.015 270);
-  --fg: oklch(0.96 0.005 270);
-  --muted: oklch(0.22 0.015 270);
-  --muted-fg: oklch(0.65 0.02 270);
-  --card: oklch(0.2 0.015 270);
-  --card-fg: oklch(0.96 0.005 270);
-  --border: oklch(0.27 0.015 270);
-  --input: oklch(0.24 0.015 270);
-  --primary: oklch(0.7 0.18 260);
-  --primary-fg: oklch(0.16 0.015 270);
-  --accent: oklch(0.75 0.15 200);
-  --accent-fg: oklch(0.16 0.015 270);
-  --success: oklch(0.7 0.17 150);
-  --warning: oklch(0.78 0.15 75);
-  --danger: oklch(0.7 0.22 25);
-  --purple: oklch(0.7 0.2 295);
+  --bg: #191919;
+  --fg: #e6e6e6;
+  --sidebar: #202020;
+  --sidebar-fg: #b0afaa;
+  --muted: #252525;
+  --muted-fg: #777771;
+  --card: #1f1f1f;
+  --card-fg: #e6e6e6;
+  --border: #2a2a2a;
+  --input: #252525;
+  --hover: #2c2c2c;
+  --primary: #529cca;
+  --primary-fg: #ffffff;
+  --accent: #529cca;
+  --accent-fg: #ffffff;
+  --success: #529584;
+  --warning: #c97e0e;
+  --danger: #df5452;
+  --purple: #9d68d3;
 }
 
 * {
   border-color: var(--border);
 }
 
+html {
+  font-feature-settings: "ss01", "cv11";
+}
+
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Notion-style focus ring (subtle) */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* Selection color */
+::selection {
+  background: color-mix(in oklch, var(--primary) 25%, transparent);
 }

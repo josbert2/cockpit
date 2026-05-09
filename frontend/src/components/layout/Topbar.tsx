@@ -1,33 +1,55 @@
 "use client";
 
-import { Search, Moon, SunMedium } from "lucide-react";
+import { Moon, SunMedium, ChevronRight, Star, Share, MoreHorizontal } from "lucide-react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const PATH_LABELS: Record<string, { label: string; emoji: string }> = {
+  "/": { label: "Proyectos", emoji: "📦" },
+  "/today": { label: "Hoy", emoji: "☀️" },
+  "/inbox": { label: "Inbox", emoji: "📥" },
+  "/tasks": { label: "Tareas", emoji: "✓" },
+  "/weekly": { label: "Weekly", emoji: "📅" },
+  "/settings": { label: "Settings", emoji: "⚙️" },
+};
 
 export function Topbar() {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  const current = PATH_LABELS[pathname] ?? { label: "Page", emoji: "📄" };
+
   return (
-    <header className="h-14 shrink-0 border-b border-border flex items-center px-4 gap-3 bg-bg/80 backdrop-blur sticky top-0 z-10">
-      <div className="flex-1 max-w-md relative">
-        <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-fg" />
-        <input
-          type="text"
-          placeholder="Buscar proyecto, tarea, captura…"
-          className="w-full h-9 pl-9 pr-12 rounded-xl bg-input border border-border text-sm placeholder:text-muted-fg focus:outline-none focus:border-primary/60 transition-colors"
-        />
-        <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-muted-fg border border-border bg-card rounded px-1.5 py-0.5">
-          ⌘K
-        </kbd>
+    <header className="h-11 shrink-0 flex items-center px-3 gap-1 border-b border-border bg-bg">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1 text-sm text-muted-fg">
+        <span className="text-base leading-none">{current.emoji}</span>
+        <ChevronRight className="size-3 opacity-50" />
+        <span className="text-fg font-medium">{current.label}</span>
       </div>
 
-      <div className="ml-auto flex items-center gap-1">
+      {/* Right actions */}
+      <div className="ml-auto flex items-center gap-0.5">
+        <button
+          type="button"
+          className="h-7 px-2 grid place-items-center rounded text-xs text-muted-fg hover:bg-hover transition-colors"
+        >
+          Share
+        </button>
+        <button
+          type="button"
+          className="size-7 grid place-items-center rounded text-muted-fg hover:bg-hover transition-colors"
+          aria-label="Star"
+        >
+          <Star className="size-4" strokeWidth={1.75} />
+        </button>
         <button
           type="button"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="size-9 grid place-items-center rounded-xl text-muted-fg hover:bg-muted hover:text-fg transition-colors"
+          className="size-7 grid place-items-center rounded text-muted-fg hover:bg-hover transition-colors"
           aria-label="Toggle theme"
         >
           {mounted && theme === "dark" ? (
@@ -35,6 +57,13 @@ export function Topbar() {
           ) : (
             <Moon className="size-4" strokeWidth={1.75} />
           )}
+        </button>
+        <button
+          type="button"
+          className="size-7 grid place-items-center rounded text-muted-fg hover:bg-hover transition-colors"
+          aria-label="More"
+        >
+          <MoreHorizontal className="size-4" strokeWidth={1.75} />
         </button>
       </div>
     </header>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/Card";
 import { Badge, STATUS_TONE } from "@/components/ui/Badge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useProjects } from "@/hooks/useProjects";
 import type { ProjectStatus } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -32,28 +32,29 @@ export default function ProjectListPage() {
   }, {});
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Proyectos</h1>
-        <p className="text-sm text-muted-fg mt-1">
-          {isLoading
+    <div className="px-12 py-8 max-w-6xl mx-auto space-y-6">
+      <PageHeader
+        emoji="📦"
+        title="Proyectos"
+        description={
+          isLoading
             ? "Cargando..."
-            : `${projects.length} repos en ~/root/. Datos en vivo desde la API.`}
-        </p>
-      </div>
+            : `${projects.length} repos en ~/root/. Datos en vivo desde la API.`
+        }
+      />
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-1 ml-12">
         {STATUS_FILTERS.map((f) => (
           <button
             key={f.key}
             type="button"
             onClick={() => setStatus(f.key)}
             className={cn(
-              "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+              "px-2.5 py-1 rounded text-xs font-medium transition-colors",
               status === f.key
-                ? "bg-primary text-primary-fg border-primary"
-                : "bg-card border-border text-muted-fg hover:text-fg"
+                ? "bg-hover text-fg"
+                : "text-muted-fg hover:bg-hover hover:text-fg"
             )}
           >
             {f.label}
@@ -69,82 +70,69 @@ export default function ProjectListPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar repo..."
-            className="h-8 px-3 rounded-xl bg-input border border-border text-sm placeholder:text-muted-fg focus:outline-none focus:border-primary/60"
+            placeholder="Buscar..."
+            className="h-7 px-2.5 rounded bg-input border-0 text-sm placeholder:text-muted-fg focus:outline-none focus:bg-hover w-48"
           />
         </div>
       </div>
 
       {error && (
-        <Card className="bg-danger/10 text-danger border-danger/30">
+        <div className="ml-12 p-3 rounded bg-danger/10 text-danger text-sm border border-danger/20">
           Error al cargar proyectos. Revisá que `php artisan serve` esté corriendo en :8000.
-        </Card>
+        </div>
       )}
 
-      <Card className="p-0 overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-muted-fg text-xs uppercase tracking-wider">
-            <tr>
-              <th className="text-left p-3 font-medium">Status</th>
-              <th className="text-left p-3 font-medium">Repo</th>
-              <th className="text-right p-3 font-medium">Días</th>
-              <th className="text-right p-3 font-medium">30d</th>
-              <th className="text-left p-3 font-medium">Stack</th>
-              <th className="text-left p-3 font-medium">Último commit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr>
-                <td colSpan={6} className="p-8 text-center text-muted-fg">
-                  Cargando...
-                </td>
-              </tr>
-            )}
-            {!isLoading && projects.length === 0 && (
-              <tr>
-                <td colSpan={6} className="p-8 text-center text-muted-fg">
-                  Sin proyectos. Corré <code className="bg-muted px-1.5 py-0.5 rounded">php artisan cockpit:scan</code>.
-                </td>
-              </tr>
-            )}
-            {projects.map((p) => (
-              <tr
-                key={p.id}
-                className="border-t border-border hover:bg-muted/40 transition-colors"
-              >
-                <td className="p-3">
-                  <Badge tone={STATUS_TONE[p.status]}>{p.status}</Badge>
-                </td>
-                <td className="p-3 font-medium">
-                  {p.name}
-                  <div className="text-xs text-muted-fg font-normal mt-0.5 truncate max-w-md">
-                    {p.path.replace("/home/jos/", "~/")}
-                  </div>
-                </td>
-                <td className="p-3 text-right tabular-nums text-muted-fg">
-                  {p.days_since_commit}
-                </td>
-                <td className="p-3 text-right tabular-nums text-muted-fg">
-                  {p.commits_30d}
-                </td>
-                <td className="p-3">
-                  {p.stack ? (
-                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                      {p.stack}
-                    </code>
-                  ) : (
-                    <span className="text-muted-fg text-xs">—</span>
-                  )}
-                </td>
-                <td className="p-3 text-muted-fg truncate max-w-md">
-                  {p.last_commit_msg ?? "—"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+      {/* Notion-style database table */}
+      <div className="ml-12 border-t border-border">
+        <div className="grid grid-cols-[6rem_1fr_5rem_5rem_10rem_2fr] text-[11px] font-semibold uppercase tracking-wider text-muted-fg/70 border-b border-border">
+          <div className="px-2 py-2">Status</div>
+          <div className="px-2 py-2">Repo</div>
+          <div className="px-2 py-2 text-right">Días</div>
+          <div className="px-2 py-2 text-right">30d</div>
+          <div className="px-2 py-2">Stack</div>
+          <div className="px-2 py-2">Último commit</div>
+        </div>
+
+        {isLoading && (
+          <div className="px-2 py-8 text-center text-muted-fg text-sm">
+            Cargando...
+          </div>
+        )}
+
+        {!isLoading &&
+          projects.map((p) => (
+            <div
+              key={p.id}
+              className="grid grid-cols-[6rem_1fr_5rem_5rem_10rem_2fr] text-sm border-b border-border hover:bg-hover/60 transition-colors group cursor-pointer"
+            >
+              <div className="px-2 py-2.5">
+                <Badge tone={STATUS_TONE[p.status]}>{p.status}</Badge>
+              </div>
+              <div className="px-2 py-2.5">
+                <div className="font-medium text-fg">{p.name}</div>
+                <div className="text-xs text-muted-fg mt-0.5 truncate font-mono">
+                  {p.path.replace("/home/jos/", "~/")}
+                </div>
+              </div>
+              <div className="px-2 py-2.5 text-right tabular-nums text-muted-fg">
+                {p.days_since_commit}
+              </div>
+              <div className="px-2 py-2.5 text-right tabular-nums text-muted-fg">
+                {p.commits_30d}
+              </div>
+              <div className="px-2 py-2.5">
+                {p.stack ? (
+                  <span className="text-xs text-muted-fg font-mono">{p.stack}</span>
+                ) : (
+                  <span className="text-muted-fg/50 text-xs">—</span>
+                )}
+              </div>
+              <div className="px-2 py-2.5 text-muted-fg text-xs truncate">
+                {p.last_commit_msg ?? "—"}
+              </div>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }
